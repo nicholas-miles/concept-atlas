@@ -208,3 +208,6 @@ __marimo__/
 
 # Data files (uploaded content)
 data/
+
+# Dev notebooks
+dev/
