@@ -20,6 +20,11 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 # Create router
 router = APIRouter()
 
+@router.get("/")
+async def root():
+    """Root endpoint"""
+    return {"message": "Concept Atlas API", "version": "0.1.0", "docs": "/docs"}
+
 @router.post("/upload")
 async def upload_file(
     file: UploadFile = File(description="File to upload"),
@@ -36,6 +41,10 @@ async def upload_file(
         JSON response with upload status and file info
     """
     try:
+        # Debug logging
+        logger.info(f"Database session type: {type(db)}")
+        logger.info(f"Database session info: {db}")
+        
         # Log the upload
         logger.info(f"Processing file: {file.filename}, size: {file.size} bytes")
         
@@ -55,6 +64,7 @@ async def upload_file(
         file_size = os.path.getsize(file_path)
         
         # Create database record
+        logger.info("Creating database record...")
         document = Document(
             name=original_filename,
             uri=str(file_path)
@@ -86,6 +96,9 @@ async def upload_file(
         
     except Exception as e:
         logger.error(f"Error uploading file: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         # Rollback database transaction on error
         if 'db' in locals():
             db.rollback()
