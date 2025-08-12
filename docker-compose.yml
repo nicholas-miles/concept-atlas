@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  db:
+    image: ankane/pgvector:latest # Postgres with pgvector preinstalled
+    environment:
+      POSTGRES_USER: concept
+      POSTGRES_PASSWORD: concept
+      POSTGRES_DB: concept_atlas
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U concept -d concept_atlas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
